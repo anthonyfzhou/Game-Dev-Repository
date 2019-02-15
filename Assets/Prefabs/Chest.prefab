@@ -143,3 +143,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   healthPack: {fileID: 7327307478815621985, guid: c31304c0244244bc3a0f52ffd788add5,
     type: 3}
+  staminaPack: {fileID: 5377202942471880126, guid: 397393339c4f74ed380099c7992b9ec5,
+    type: 3}

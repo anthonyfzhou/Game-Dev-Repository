@@ -7,6 +7,9 @@ public class PlayerController : MonoBehaviour
 {
     #region movement_variables
     public float movespeed;
+    float sprintSpeed;
+    float originalSpeed;
+    private bool isSprinting;
     float x_input;
     float y_input;
     #endregion
@@ -25,6 +28,12 @@ public class PlayerController : MonoBehaviour
     public float maxHealth;
     float currHealth;
     public Slider hpSlider;
+    #endregion
+
+    #region stamina_variables
+    public float maxStamina;
+    float currStamina;
+    public Slider staminaSlider;
     #endregion
 
     #region physics_components
@@ -47,6 +56,12 @@ public class PlayerController : MonoBehaviour
         attackTimer = 0;
 
         currHealth = maxHealth;
+
+        currStamina = maxStamina;
+
+        originalSpeed = movespeed;
+
+        sprintSpeed = 2 * movespeed;
 
         hpSlider.value = currHealth / maxHealth;
     }
@@ -75,10 +90,37 @@ public class PlayerController : MonoBehaviour
             attackTimer -= Time.deltaTime;
         }
 
-        if (Input.GetKeyDown(KeyCode.L)) 
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            if (isSprinting == true)
+            {
+                isSprinting = false;
+                movespeed = originalSpeed;
+            }
+
+            else if (isSprinting == false)
+            {
+                isSprinting = true;
+                movespeed = sprintSpeed;
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.L))
         {
             Interact();
         }
+
+        if (isSprinting == true)
+        {
+            use_Stamina(6.5f);
+        }
+
+        if (isSprinting == false)
+        {
+            use_Stamina(-2);
+
+        }
+
     }
     #endregion
 
@@ -240,6 +282,48 @@ public class PlayerController : MonoBehaviour
                 hit.transform.GetComponent<Chest>().Interact();
             }
         }
+    }
+    #endregion
+
+    #region stamina_Functions
+
+    public void increaseStamina(float value)
+    {
+        //Add Stamina
+        currStamina += value;
+
+        //Check to see if you added too much
+        if (currStamina > maxStamina)
+        {
+            currStamina = maxStamina;
+        }
+
+        //Adjust the slider to reflect the change
+        staminaSlider.value = currStamina / maxStamina;
+    }
+
+    public void use_Stamina(float value)
+    {
+        //Decrement Stamina
+        currStamina -= value;
+        //Stop sprinting if we run out of stamina
+        if (currStamina <= 0)
+        {
+            isSprinting = false;
+            movespeed = originalSpeed;
+        }
+
+        //Don't go past the max stamina value
+        if (currStamina > maxStamina)
+        {
+            currStamina = maxStamina;
+        }
+        Debug.Log("Stamina is now " + currStamina.ToString());
+
+        //Move the Stamina Slider
+        staminaSlider.value = currStamina / maxStamina;
+
+
     }
     #endregion
 }
